@@ -1,13 +1,51 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Suez One Font - Used for brand title "Panacea" */
+@import url("https://fonts.googleapis.com/css2?family=Suez+One&display=swap");
+
+/* Poppins Font  */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/* Mulish Font  */
+@import url("https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap");
+
+/* Roboto Font  */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+.theme {
+  --Primary_Color: #4070b1;
+  --Background_Color: #fcfbff;
+
+  --White_Color: #ffffff;
+  --Grey_Color: #ada0a0;
+  --Black_Color: #000000;
+
+  --Error_Color: #c0392b;
+  --Success_Color: #27ae60;
+  --Warning_Color: #e67e22;
+  --Info_Color: #2980b9;
+
+  --Utility_Color1: #ecf4ff;
+
+  /* Font families */
+  --Font_Family: "Roboto", sans-serif;
+  --Font_Poppins: "Poppins", sans-serif;
+  --Font_Mulish: "Mulish", sans-serif;
+  --Font_Brand: "Suez One", serif;
+
+  --Font_Size_1: 12px;
+  --Font_Size_2: 14px;
+  --Font_Size_3: 15px;
+  --Font_Size_4: 20px;
+  --Font_Size_5: 24px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  font-family: var(--Font_Family);
+}
+
+a {
+  text-decoration: none;
 }
