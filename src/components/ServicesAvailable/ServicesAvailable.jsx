@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Import Link
 import { motion } from "framer-motion";
 import {
   Mic,
@@ -96,19 +97,26 @@ const ServicesAvailable = () => {
           viewport={{ once: false, amount: 0.2 }}
         >
           {servicesList.map((service) => (
-            <motion.div
+            /* Wrap in Link to navigate */
+            <Link
               key={service.id}
-              variants={itemVariants}
-              className={`${styles.serviceCard} ${
-                activeId === service.id ? styles.active : ""
-              }`}
-              onClick={() => setActiveId(service.id)}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              to="/repair/mobile"
+              className={styles.serviceLink}
+              style={{ textDecoration: "none" }} // Ensure no underline
             >
-              <div className={styles.serviceIcon}>{service.icon}</div>
-              <span className={styles.serviceLabel}>{service.label}</span>
-            </motion.div>
+              <motion.div
+                variants={itemVariants}
+                className={`${styles.serviceCard} ${
+                  activeId === service.id ? styles.active : ""
+                }`}
+                onClick={() => setActiveId(service.id)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className={styles.serviceIcon}>{service.icon}</div>
+                <span className={styles.serviceLabel}>{service.label}</span>
+              </motion.div>
+            </Link>
           ))}
         </motion.div>
 

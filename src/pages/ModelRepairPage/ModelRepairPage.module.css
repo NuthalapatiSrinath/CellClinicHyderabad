@@ -1,0 +1,329 @@
+.pageWrapper {
+  width: 100%;
+  padding-bottom: 80px;
+  /* Uses theme variables */
+  background-color: var(--Background_Main);
+  color: var(--Text_Primary);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+/* --- Header --- */
+.modelHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: var(--Surface_Card);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--Shadow_Sm);
+  margin-bottom: 30px;
+  border: 1px solid var(--Border_Color);
+}
+
+.modelImage {
+  width: 60px;
+  height: auto;
+  object-fit: contain;
+}
+.modelTitle {
+  font-family: var(--Font_Heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--Text_Primary);
+}
+
+/* --- Layout --- */
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--Text_Secondary);
+  margin-bottom: 20px;
+}
+
+/* --- Services --- */
+.servicesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.serviceCard {
+  background-color: var(--Surface_Card);
+  border: 1px solid var(--Border_Color);
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.serviceCard:hover {
+  box-shadow: var(--Shadow_Md);
+  border-color: var(--Primary_Color);
+}
+
+.serviceCard.selected {
+  border-color: var(--Primary_Color);
+  background-color: rgba(37, 99, 235, 0.05); /* Brand Blue Tint */
+}
+
+:global([data-theme="dark"]) .serviceCard.selected {
+  background-color: rgba(37, 99, 235, 0.15);
+}
+
+.discountBadge {
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  background-color: #10b981; /* Green for discount */
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.cardContent {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.iconBox {
+  color: var(--Primary_Color);
+  flex-shrink: 0;
+}
+.details {
+  flex: 1;
+}
+
+.serviceTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--Text_Primary);
+  margin-bottom: 4px;
+}
+.price {
+  font-weight: 800;
+  color: var(--Text_Primary);
+}
+.originalPrice {
+  font-size: 13px;
+  color: var(--Text_Muted);
+  text-decoration: line-through;
+}
+
+/* --- Add Button --- */
+.addBtn {
+  background-color: var(--Primary_Color); /* Brand Blue */
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.addBtn:hover {
+  background-color: var(--Primary_Hover);
+}
+.addedBtn {
+  background-color: #10b981; /* Green Success */
+}
+
+.infoText {
+  font-size: 11px;
+  color: var(--Text_Muted);
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.4;
+}
+
+/* --- Bottom Info --- */
+.bottomInfo {
+  background-color: rgba(37, 99, 235, 0.08);
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--Primary_Color);
+  font-size: 14px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+.bottomInfo a {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* --- Why Choose Us --- */
+.whyChoose {
+  background-color: var(--Surface_Card);
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid var(--Border_Color);
+  box-shadow: var(--Shadow_Sm);
+}
+.whyChoose h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: var(--Text_Primary);
+}
+
+.featuresRow {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+.featureItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--Text_Secondary);
+}
+.featureIconBox {
+  color: var(--Primary_Color);
+}
+
+/* --- Right Column (Cart) --- */
+.rightColumn {
+  position: sticky;
+  top: 100px;
+}
+
+.priceCard {
+  background-color: var(--Surface_Card);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: var(--Shadow_Sm);
+  border: 1px solid var(--Border_Color);
+}
+.priceTitle {
+  font-size: 18px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--Border_Color);
+  padding-bottom: 10px;
+  color: var(--Text_Primary);
+}
+
+.cartItems {
+  margin-bottom: 20px;
+  border-bottom: 1px dashed var(--Border_Color);
+  padding-bottom: 10px;
+}
+.cartRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--Text_Secondary);
+  margin-bottom: 8px;
+}
+
+.couponSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--Text_Secondary);
+}
+.applyBtn {
+  color: var(--Primary_Color);
+  background: none;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.billRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  border-top: 1px solid var(--Border_Color);
+  padding-top: 15px;
+  color: var(--Text_Primary);
+}
+
+.bookRepairBtn {
+  width: 100%;
+  background-color: var(--Primary_Color);
+  color: white;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+.bookRepairBtn:hover {
+  background-color: var(--Primary_Hover);
+}
+.bookRepairBtn:disabled {
+  background-color: var(--Text_Muted);
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .layoutGrid {
+    grid-template-columns: 1fr;
+  }
+  .rightColumn {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    top: auto;
+    z-index: 100;
+    padding: 0;
+  }
+  .priceCard {
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    border-bottom: none;
+  }
+  .pageWrapper {
+    padding-bottom: 250px;
+  }
+}
+
+@media (max-width: 600px) {
+  .servicesGrid {
+    grid-template-columns: 1fr;
+  }
+  .featuresRow {
+    flex-direction: column;
+    gap: 20px;
+  }
+}

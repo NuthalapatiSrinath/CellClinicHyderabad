@@ -1,13 +1,11 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { NavLink } from "react-router-dom"; // Changed to NavLink
 import styles from "./BrandsSection.module.css";
 
 const brands = [
-  // Converted to Text
   { id: 1, name: "Apple", color: "#000000", style: "apple" },
   { id: 2, name: "xiaomi", label: "mi", color: "#FF6900", style: "xiaomi" },
-
-  // Existing Text Brands
   { id: 3, name: "SAMSUNG", color: "#1428A0", style: "sans" },
   { id: 4, name: "vivo", color: "#415FFF", style: "lowercase" },
   { id: 5, name: "ONEPLUS", color: "#F00024", style: "oneplus" },
@@ -25,9 +23,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.1 },
   },
 };
 
@@ -49,7 +45,7 @@ const BrandsSection = () => {
           className={styles.title}
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }} // Animates every time you scroll to it
+          viewport={{ once: false }}
           transition={{ duration: 0.6 }}
         >
           Choose Your Brands
@@ -60,35 +56,39 @@ const BrandsSection = () => {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }} // Animates every time you scroll to it
+          viewport={{ once: false, amount: 0.2 }}
         >
           {brands.map((brand) => (
-            <motion.div
+            /* Using NavLink ensures proper navigation handling */
+            <NavLink
               key={brand.id}
-              className={styles.card}
-              variants={cardVariants}
-              whileHover={{
-                y: -5,
-                boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
-                transition: { duration: 0.2 },
-              }}
+              to={`/repair-brand/${brand.name.toLowerCase()}`}
+              className={styles.cardLink}
             >
-              <div
-                className={`${styles.brandText} ${styles[brand.style]}`}
-                style={{ color: brand.color }}
+              <motion.div
+                className={styles.card}
+                variants={cardVariants}
+                whileHover={{
+                  y: -5,
+                  boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
+                  transition: { duration: 0.2 },
+                }}
               >
-                {/* Special Icon Elements */}
-                {brand.style === "moto" && (
-                  <span className={styles.motoM}>M</span>
-                )}
-                {brand.style === "oneplus" && (
-                  <span className={styles.onePlusBox}>1+</span>
-                )}
+                <div
+                  className={`${styles.brandText} ${styles[brand.style]}`}
+                  style={{ color: brand.color }}
+                >
+                  {brand.style === "moto" && (
+                    <span className={styles.motoM}>M</span>
+                  )}
+                  {brand.style === "oneplus" && (
+                    <span className={styles.onePlusBox}>1+</span>
+                  )}
 
-                {/* Check if there is a special label (like 'mi') or use name */}
-                {brand.label ? brand.label : brand.name}
-              </div>
-            </motion.div>
+                  {brand.label ? brand.label : brand.name}
+                </div>
+              </motion.div>
+            </NavLink>
           ))}
         </motion.div>
       </div>

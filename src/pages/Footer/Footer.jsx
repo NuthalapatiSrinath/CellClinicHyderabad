@@ -16,10 +16,9 @@ const Footer = () => {
     <footer className={styles.footer}>
       <div className={styles.container}>
         <div className={styles.grid}>
-          {/* Column 1: Brand Info */}
+          {/* --- Column 1: Brand Info --- */}
           <div className={styles.brandColumn}>
             <div className={styles.logoRow}>
-              {/* UPDATED: Image Logo */}
               <img
                 src="/logo.webp"
                 alt="Cell Clinic Logo"
@@ -47,7 +46,7 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Column 2: Quick Links */}
+          {/* --- Column 2: Quick Links (Main Nav) --- */}
           <div className={styles.linkColumn}>
             <h3 className={styles.heading}>Quick Links</h3>
             <ul className={styles.list}>
@@ -61,7 +60,7 @@ const Footer = () => {
                 <Link to="/services">Services</Link>
               </li>
               <li>
-                <Link to="/reviews">Reviews</Link>
+                <Link to="/privacy-policy">Privacy Policy</Link>
               </li>
               <li>
                 <Link to="/contact">Contact</Link>
@@ -69,29 +68,51 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: Services */}
+          {/* --- Column 3: Help & Support (Policies) --- */}
           <div className={styles.linkColumn}>
-            <h3 className={styles.heading}>Services</h3>
+            <h3 className={styles.heading}>Help & Support</h3>
             <ul className={styles.list}>
+              {/* <li>
+                <Link to="/privacy-policy">Privacy Policy</Link>
+              </li> */}
               <li>
-                <Link to="/services/iphone">iPhone Repair</Link>
+                <Link to="/terms">Terms & Conditions</Link>
               </li>
               <li>
-                <Link to="/services/macbook">MacBook Repair</Link>
+                <Link to="/warranty">Warranty Policy</Link>
               </li>
               <li>
-                <Link to="/services/ipad">iPad Repair</Link>
+                <Link to="/partner">Partner With Us</Link>
               </li>
               <li>
-                <Link to="/services/android">Android Repair</Link>
-              </li>
-              <li>
-                <Link to="/services/watch">Watch Repair</Link>
+                <Link to="/faq">FAQ</Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: Contact Us */}
+          {/* --- Column 4: Services --- */}
+          <div className={styles.linkColumn}>
+            <h3 className={styles.heading}>Our Services</h3>
+            <ul className={styles.list}>
+              <li>
+                <Link to="/repair-brand/apple">iPhone Repair</Link>
+              </li>
+              <li>
+                <Link to="/repair-brand/macbook">MacBook Repair</Link>
+              </li>
+              <li>
+                <Link to="/repair-brand/ipad">iPad Repair</Link>
+              </li>
+              <li>
+                <Link to="/repair/mobile">Android Repair</Link>
+              </li>
+              <li>
+                <Link to="/repair-brand/smartwatch">Watch Repair</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* --- Column 5: Contact Us --- */}
           <div className={styles.contactColumn}>
             <h3 className={styles.heading}>Contact Us</h3>
             <div className={styles.contactItem}>

@@ -2,20 +2,20 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./RenderModal.module.css";
-
-// Redux
-// import { closeModal } from "../../redux/slices/modalSlice";
-
-// Components
 import MainModal from "../MainModal/MainModal";
+
+// Import your new modal
+import LoginModal from "../LoginModal/LoginModal";
+import FindModelModal from "../FindModelModal/FindModelModal";
 
 function RenderModal() {
   const activeModal = useSelector((state) => state.modal.type);
-  // const dispatch = useDispatch();
-  // const [formValue, setFormValue] = useState("");
-  // const modalData = useSelector((state) => state.modal.modalData);
 
-  const allModals = {};
+  // Register the modal here
+  const allModals = {
+    login: <LoginModal />,
+    findModel: <FindModelModal />,
+  };
 
   return (
     <MainModal>
@@ -24,10 +24,11 @@ function RenderModal() {
           <motion.div
             key={activeModal}
             className={styles.RenderModal}
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}
+            // Adjusted animation for a centered pop-up feel
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
           >
             {allModals[activeModal]}
           </motion.div>

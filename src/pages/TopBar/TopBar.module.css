@@ -11,7 +11,6 @@
   color: #e2e8f0;
   font-size: 13px;
   padding: 8px 0;
-  /* This border is fine as it's internal to the strip, but let's make it safer */
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position: relative;
   z-index: 1100;
@@ -85,24 +84,21 @@
 .mainNav {
   background: var(--Hero_Gradient);
   padding: 16px 0;
-
-  /* FIX: Force border to 0 to remove any default or inherited borders */
   border: 0;
   border-bottom: none;
   outline: none;
   box-shadow: none;
-
   position: sticky;
   top: 0;
   z-index: 1100;
   transition: box-shadow 0.3s ease, background 0.3s ease, padding 0.3s ease;
 }
 
-/* Only show shadow when scrolling */
+/* Sticky Shadow */
 .stickyShadow {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Softer shadow to avoid hard lines */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   padding: 12px 0;
 }
 
@@ -168,22 +164,6 @@
   gap: 16px;
 }
 
-.contactBtnMain {
-  background-color: var(--Primary_Color);
-  color: white;
-  padding: 10px 24px;
-  border-radius: 6px;
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-  transition: transform 0.2s, background-color 0.2s;
-}
-
-.contactBtnMain:hover {
-  background-color: var(--Primary_Hover);
-  transform: translateY(-1px);
-}
-
 .themeToggle {
   background: transparent;
   border: 1px solid var(--Border_Color);
@@ -218,20 +198,19 @@
   left: 0;
   width: 100%;
   background-color: var(--Background_Main);
-
-  /* FIX: Remove border here when closed to prevent bleeding */
   border-bottom: none;
   box-shadow: none;
 
+  /* Default closed state */
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s ease-in-out;
   z-index: 999;
 }
 
-/* Only show border/shadow when menu is actually OPEN */
+/* OPEN STATE */
 .menuOpen {
-  max-height: 500px;
+  max-height: 500px; /* Enough height for links */
   border-bottom: 1px solid var(--Border_Color);
   box-shadow: var(--Shadow_Lg);
 }
@@ -268,17 +247,118 @@
   text-decoration: none;
 }
 
+/* --- AUTH BUTTONS --- */
+.signInBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  border: 1px solid var(--Border_Color);
+  color: var(--Text_Primary);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--Font_Heading);
+}
+
+.signInBtn:hover {
+  border-color: var(--Primary_Color);
+  color: var(--Primary_Color);
+  background-color: var(--Background_Alt);
+}
+
+/* Profile */
+.profileWrapper {
+  position: relative;
+}
+
+.profileBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--Text_Primary);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.profileBtn:hover {
+  background-color: var(--Background_Alt);
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+}
+
+.rotate {
+  transform: rotate(180deg);
+}
+
+/* Dropdown */
+.dropdownMenu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  width: 180px;
+  background-color: var(--Surface_Card);
+  border: 1px solid var(--Border_Color);
+  border-radius: 8px;
+  box-shadow: var(--Shadow_Lg);
+  padding: 8px 0;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--Text_Secondary);
+  background: none;
+  border: none;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dropdownItem:hover {
+  background-color: var(--Background_Alt);
+  color: var(--Primary_Color);
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 1024px) {
   .navLinks {
     display: none;
   }
-  .contactBtnMain {
-    display: none;
-  }
+
   .mobileMenuBtn {
     display: block;
   }
+
   .brandName {
     font-size: 18px;
   }
@@ -333,12 +413,20 @@
   }
 }
 
-@media (max-width: 480px) {
-  .contactRow {
-    flex-direction: column;
-    gap: 8px;
+@media (max-width: 768px) {
+  .signInBtn span {
+    display: none; /* Icon only on mobile */
   }
+  .signInBtn {
+    padding: 8px;
+    border-radius: 50%;
+  }
+  .profileName {
+    display: none;
+  }
+}
 
+@media (max-width: 480px) {
   .logoImage {
     height: 40px;
   }

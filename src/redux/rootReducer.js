@@ -1,11 +1,13 @@
 import navBarSlice from "./slices/navBarSlice";
 import modalSlice from "./slices/modalSlice";
-import themeSlice from "./slices/themeSlice"; // Import new slice
+import themeSlice from "./slices/themeSlice";
+import authSlice from "./slices/authSlice"; // Import
 
 const rootReducer = {
   navBar: navBarSlice,
   modal: modalSlice,
-  theme: themeSlice, // Add it here
+  theme: themeSlice,
+  auth: authSlice, // Add
 };
 
 export default rootReducer;

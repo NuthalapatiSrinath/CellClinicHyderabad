@@ -8,11 +8,13 @@ import VideoSection from "../../components/VideoSection/VideoSection";
 import WhyUsSection from "../../components/WhyUsSection/WhyUsSection";
 import ClientStoriesSection from "../../components/ClientStoriesSection/ClientStoriesSection";
 import SpotlightSection from "../../components/SpotlightSection/SpotlightSection"; // Import
+import DoorstepRepairSection from "../../components/DoorstepRepairSection/DoorstepRepairSection";
 
 const HomePage = () => {
   return (
     <div>
       <HeroSection />
+      <DoorstepRepairSection />
       <ServicesSection />
       <BrandsSection />
       <HowItWorksSection />
