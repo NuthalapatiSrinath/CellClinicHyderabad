@@ -59,9 +59,9 @@ export default function AppRoutes() {
           <Route path="pickup-checklist" element={<PickupChecklistPage />} />
           <Route path="payment" element={<PaymentPage />} />
           <Route path="repair/mobile" element={<MobileRepairPage />} />
-          // Inside Routes
+
           <Route path="services" element={<ServicesPage />} />
-          // Optional: Handle sub-routes if needed (e.g., redirects)
+
           <Route path="services/iphone" element={<ServicesPage />} />
           <Route path="services/macbook" element={<ServicesPage />} />
           {/* <Route path="about" element={<AboutPage />} />

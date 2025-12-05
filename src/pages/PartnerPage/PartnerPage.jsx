@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { Wrench, Store, Building2, ArrowRight } from "lucide-react";
+import { Wrench, Store, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import styles from "./PartnerPage.module.css";
 

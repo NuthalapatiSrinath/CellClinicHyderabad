@@ -31,16 +31,16 @@ const Footer = () => {
               repairs with genuine parts and warranty.
             </p>
             <div className={styles.socialRow}>
-              <a href="#" className={styles.socialIcon} aria-label="Facebook">
+              <a href="#s" className={styles.socialIcon} aria-label="Facebook">
                 <Facebook size={18} />
               </a>
-              <a href="#" className={styles.socialIcon} aria-label="Twitter">
+              <a href="#s" className={styles.socialIcon} aria-label="Twitter">
                 <Twitter size={18} />
               </a>
-              <a href="#" className={styles.socialIcon} aria-label="Instagram">
+              <a href="#s" className={styles.socialIcon} aria-label="Instagram">
                 <Instagram size={18} />
               </a>
-              <a href="#" className={styles.socialIcon} aria-label="LinkedIn">
+              <a href="#s" className={styles.socialIcon} aria-label="LinkedIn">
                 <Linkedin size={18} />
               </a>
             </div>

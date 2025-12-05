@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { motion } from "framer-motion";
-import { MapPin, Calendar, Clock, Navigation, Loader2 } from "lucide-react";
+// import { motion } from "framer-motion";
+import { Clock, Navigation, Loader2 } from "lucide-react";
 import styles from "./AddressInfoPage.module.css";
 
 const AddressInfoPage = () => {

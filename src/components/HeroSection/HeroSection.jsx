@@ -110,11 +110,15 @@ const HeroSection = () => {
                 <button className={styles.bookBtn}>BOOK NOW</button>
 
                 <div className={styles.socialIcons}>
-                  <a href="#" className={styles.iconLink} aria-label="WhatsApp">
+                  <a
+                    href="xk"
+                    className={styles.iconLink}
+                    aria-label="WhatsApp"
+                  >
                     <MessageCircle size={20} />
                   </a>
                   <a
-                    href="#"
+                    href="#s"
                     className={styles.iconLink}
                     aria-label="Instagram"
                   >
