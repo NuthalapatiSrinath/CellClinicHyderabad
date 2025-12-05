@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom"; // Added useNavigate
-import { useDispatch, useSelector } from "react-redux"; // Added useSelector
+import { useParams, Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { openModal } from "../../redux/slices/modalSlice";
 import { motion } from "framer-motion";
 import {
@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import styles from "./ModelRepairPage.module.css";
 
-// --- Dummy Data for Repair Services ---
+// --- Repair Services Data ---
 const repairServices = [
   {
     id: 1,
@@ -98,10 +98,6 @@ const repairServices = [
 const ModelRepairPage = () => {
   const { modelName } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // For navigation
-
-  // Get Login State
-  const { isAuthenticated } = useSelector((state) => state.auth);
 
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
@@ -129,20 +125,25 @@ const ModelRepairPage = () => {
     }
   };
 
-  // --- UPDATED BOOKING LOGIC ---
-  const handleBookRepair = () => {
-    if (isAuthenticated) {
-      // User is logged in -> Go to Checkout
-      navigate("/checkout");
-    } else {
-      // User is NOT logged in -> Open Login Modal
-      dispatch(openModal({ type: "login" }));
-    }
+  // --- GET QUOTE HANDLER ---
+  const handleGetQuote = () => {
+    // Open the Booking Modal and pass the selected details
+    dispatch(
+      openModal({
+        type: "booking",
+        data: {
+          deviceModel: modelName || "Apple iPhone 16 Pro Max",
+          selectedServices: cart,
+          total: total,
+        },
+      })
+    );
   };
 
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.container}>
+        {/* --- Header --- */}
         <div className={styles.header}>
           <div className={styles.modelHeader}>
             <img
@@ -157,18 +158,19 @@ const ModelRepairPage = () => {
         </div>
 
         <div className={styles.layoutGrid}>
+          {/* --- LEFT: Services --- */}
           <div className={styles.leftColumn}>
             <h3 className={styles.sectionTitle}>Pick Your Repair Service</h3>
 
             <div className={styles.servicesGrid}>
               {repairServices.map((service) => {
-                const isAdded = cart.some((item) => item.id === service.id);
+                const isSelected = cart.some((item) => item.id === service.id);
 
                 return (
                   <motion.div
                     key={service.id}
                     className={`${styles.serviceCard} ${
-                      isAdded ? styles.selected : ""
+                      isSelected ? styles.selected : ""
                     }`}
                     whileHover={{ y: -3 }}
                     transition={{ duration: 0.2 }}
@@ -198,16 +200,17 @@ const ModelRepairPage = () => {
 
                     <button
                       className={`${styles.addBtn} ${
-                        isAdded ? styles.addedBtn : ""
+                        isSelected ? styles.addedBtn : ""
                       }`}
                       onClick={() => toggleService(service)}
                     >
-                      {isAdded ? (
+                      {isSelected ? (
                         <>
-                          <Check size={16} style={{ marginRight: 4 }} /> Added
+                          <Check size={16} style={{ marginRight: 4 }} />{" "}
+                          Selected
                         </>
                       ) : (
-                        "Add"
+                        "Select"
                       )}
                     </button>
 
@@ -219,6 +222,7 @@ const ModelRepairPage = () => {
               })}
             </div>
 
+            {/* --- Info --- */}
             <div className={styles.bottomInfo}>
               <Wrench size={20} />
               <span>
@@ -229,6 +233,7 @@ const ModelRepairPage = () => {
               </span>
             </div>
 
+            {/* --- Features --- */}
             <div className={styles.whyChoose}>
               <h3>Why Choose us?</h3>
               <div className={styles.featuresRow}>
@@ -254,11 +259,12 @@ const ModelRepairPage = () => {
             </div>
           </div>
 
+          {/* --- RIGHT: Quote Summary --- */}
           <div className={styles.rightColumn}>
             <div className={styles.priceCard}>
-              <h3 className={styles.priceTitle}>Price Details</h3>
+              <h3 className={styles.priceTitle}>Estimated Quote</h3>
 
-              {cart.length > 0 && (
+              {cart.length > 0 ? (
                 <div className={styles.cartItems}>
                   {cart.map((item) => (
                     <div key={item.id} className={styles.cartRow}>
@@ -267,25 +273,27 @@ const ModelRepairPage = () => {
                     </div>
                   ))}
                 </div>
+              ) : (
+                <p className={styles.emptyCartMsg}>No services selected</p>
               )}
 
-              <div className={styles.couponSection}>
-                <span>Apply Coupon</span>
-                <button className={styles.applyBtn}>Apply</button>
-              </div>
-
               <div className={styles.billRow}>
-                <span>Total Amount</span>
+                <span>Total Estimate</span>
                 <span className={styles.totalAmount}>{formatPrice(total)}</span>
               </div>
 
               <button
                 className={styles.bookRepairBtn}
-                onClick={handleBookRepair}
+                onClick={handleGetQuote}
                 disabled={total === 0}
               >
-                Book Repair
+                Get Quote
               </button>
+
+              <p className={styles.quoteNote}>
+                *Clicking "Get Quote" will send your details to our team. You
+                will receive a call back shortly.
+              </p>
             </div>
           </div>
         </div>

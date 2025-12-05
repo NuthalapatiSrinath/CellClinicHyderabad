@@ -1,0 +1,192 @@
+.modalContainer {
+  background: white;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 30px;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  z-index: 10;
+  transition: transform 0.2s;
+}
+
+.closeBtn:hover {
+  transform: scale(1.1);
+  color: #111;
+}
+
+/* --- Success View --- */
+.successView {
+  text-align: center;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.successIcon {
+  color: #22c55e; /* Green */
+  margin-bottom: 20px;
+}
+
+.successView h2 {
+  font-family: var(--Font_Heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--Text_Primary);
+  margin-bottom: 10px;
+}
+
+.successView p {
+  color: var(--Text_Secondary);
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+/* --- Form View --- */
+.formView {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.iconCircle {
+  width: 60px;
+  height: 60px;
+  background-color: #eff6ff; /* Light Blue Background */
+  color: var(--Primary_Color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+}
+
+.header h2 {
+  font-family: var(--Font_Heading);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--Text_Primary);
+  margin-bottom: 8px;
+}
+
+.header p {
+  font-size: 14px;
+  color: var(--Text_Secondary);
+  line-height: 1.4;
+}
+
+.header p b {
+  color: var(--Primary_Color);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--Text_Primary);
+}
+
+.inputGroup input {
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s;
+  background: #f9fafb;
+  color: var(--Text_Primary);
+  font-family: var(--Font_Body);
+}
+
+.inputGroup input:focus {
+  border-color: var(--Primary_Color);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.submitBtn {
+  background-color: var(--Primary_Color);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s;
+  margin-top: 10px;
+}
+
+.submitBtn:hover {
+  background-color: var(--Primary_Hover);
+}
+
+.submitBtn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Loading Spinner Animation */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

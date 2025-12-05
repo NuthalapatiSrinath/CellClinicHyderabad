@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom"; // Changed to NavLink
+import { NavLink } from "react-router-dom";
 import styles from "./BrandsSection.module.css";
+import { catalogService } from "../../services/catalogService"; // Import API Service
 
-const brands = [
+// --- UI Config (Maps DB names to your specific colors/styles) ---
+const BRAND_STYLES = {
+  apple: { color: "#000000", style: "apple" },
+  xiaomi: { label: "mi", color: "#FF6900", style: "xiaomi" },
+  samsung: { color: "#1428A0", style: "sans", nameDisplay: "SAMSUNG" },
+  vivo: { color: "#415FFF", style: "lowercase" },
+  oneplus: { color: "#F00024", style: "oneplus", nameDisplay: "ONEPLUS" },
+  oppo: { color: "#04823F", style: "lowercase-bold" },
+  motorola: { color: "#5c5c5c", style: "moto" },
+  iqoo: { color: "#FBC02D", style: "bold" },
+  poco: { color: "#FFD400", style: "bold" },
+  tecno: { color: "#0033A0", style: "sans", nameDisplay: "TECNO" },
+  nothing: { color: "#000000", style: "dotted", nameDisplay: "NOTHING" },
+  nokia: { color: "#124191", style: "bold", nameDisplay: "NOKIA" },
+  honor: { color: "#00E0FF", style: "gradient" },
+};
+
+// --- Fallback Data ---
+const fallbackBrands = [
   { id: 1, name: "Apple", color: "#000000", style: "apple" },
   { id: 2, name: "xiaomi", label: "mi", color: "#FF6900", style: "xiaomi" },
   { id: 3, name: "SAMSUNG", color: "#1428A0", style: "sans" },
@@ -18,7 +37,6 @@ const brands = [
   { id: 12, name: "NOKIA", color: "#124191", style: "bold" },
 ];
 
-// --- Animation Variants ---
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -38,6 +56,53 @@ const cardVariants = {
 };
 
 const BrandsSection = () => {
+  const [brandsList, setBrandsList] = useState(fallbackBrands);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        console.log("🔵 Fetching Brands from API..."); // LOG 1: Start
+        const response = await catalogService.getBrands();
+        console.log("🟢 API Response:", response); // LOG 2: Raw Response
+
+        if (response && response.data && response.data.length > 0) {
+          // Filter only mobile brands
+          const mobileBrands = response.data.filter(
+            (b) =>
+              !["ipad", "macbook", "smartwatch"].includes(b.name.toLowerCase())
+          );
+
+          if (mobileBrands.length > 0) {
+            const integratedBrands = mobileBrands.map((b) => {
+              const config = BRAND_STYLES[b.name.toLowerCase()] || {
+                color: "#333",
+                style: "sans",
+              };
+              return {
+                id: b._id,
+                name: config.nameDisplay || b.name,
+                label: config.label,
+                color: config.color,
+                style: config.style,
+                dbName: b.name,
+              };
+            });
+
+            console.log("✅ Brands Mapped & Ready:", integratedBrands); // LOG 3: Final Data
+            setBrandsList(integratedBrands);
+          } else {
+            console.log("⚠️ API returned data, but no mobile brands found.");
+          }
+        } else {
+          console.log("⚠️ API Response empty or invalid structure.");
+        }
+      } catch (error) {
+        console.error("🔴 Error fetching brands:", error); // LOG 4: Error
+      }
+    };
+    fetchBrands();
+  }, []);
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -58,11 +123,10 @@ const BrandsSection = () => {
           whileInView="visible"
           viewport={{ once: false, amount: 0.2 }}
         >
-          {brands.map((brand) => (
-            /* Using NavLink ensures proper navigation handling */
+          {brandsList.map((brand) => (
             <NavLink
               key={brand.id}
-              to={`/repair-brand/${brand.name.toLowerCase()}`}
+              to={`/repair-brand/${(brand.dbName || brand.name).toLowerCase()}`}
               className={styles.cardLink}
             >
               <motion.div

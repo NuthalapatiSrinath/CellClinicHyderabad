@@ -327,3 +327,22 @@
     gap: 20px;
   }
 }
+/* ... existing styles ... */
+
+.quoteNote {
+  font-size: 11px;
+  color: var(--Text_Muted);
+  margin-top: 15px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.emptyCartMsg {
+  font-size: 13px;
+  color: var(--Text_Muted);
+  font-style: italic;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ... rest of the file ... */

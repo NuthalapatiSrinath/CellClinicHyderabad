@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CheckCircle, Package, ArrowRight } from "lucide-react";
+import { CheckCircle, Home, PhoneCall } from "lucide-react";
 import styles from "./BookingSuccessPage.module.css";
 
 const BookingSuccessPage = () => {
@@ -22,30 +22,35 @@ const BookingSuccessPage = () => {
             <CheckCircle size={80} className={styles.successIcon} />
           </div>
 
-          <h1 className={styles.title}>Booking Confirmed!</h1>
+          <h1 className={styles.title}>Quote Request Sent!</h1>
           <p className={styles.subText}>
-            Thank you for choosing Cell Clinic Hyderabad. Your repair request
-            has been successfully placed.
+            Thank you for choosing Cell Clinic Hyderabad. We have received your
+            details. Our expert team will review the issue and{" "}
+            <strong>call you back shortly</strong> to discuss the best price and
+            schedule your repair.
           </p>
 
           <div className={styles.orderDetails}>
             <div className={styles.row}>
-              <span>Order ID:</span>
-              <strong>#CCH-89023</strong>
+              <span>Reference ID:</span>
+              <strong>
+                #REQ-{Math.floor(100000 + Math.random() * 900000)}
+              </strong>
             </div>
             <div className={styles.row}>
-              <span>Estimated Time:</span>
-              <strong>Tomorrow, 10:00 AM - 12:00 PM</strong>
+              <span>Status:</span>
+              <strong style={{ color: "#eab308" }}>Pending Callback</strong>
             </div>
           </div>
 
           <div className={styles.actions}>
-            <Link to="/orders" className={styles.trackBtn}>
-              <Package size={18} /> Track Order
-            </Link>
             <Link to="/" className={styles.homeBtn}>
-              Go Home <ArrowRight size={18} />
+              <Home size={18} /> Back to Home
             </Link>
+            {/* Optional: Immediate Call Action */}
+            <a href="tel:+919346532339" className={styles.callBtn}>
+              <PhoneCall size={18} /> Call Us Now
+            </a>
           </div>
         </motion.div>
       </div>

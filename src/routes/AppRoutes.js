@@ -55,9 +55,9 @@ export default function AppRoutes() {
           <Route path="repair/model/:modelName" element={<ModelRepairPage />} />
           <Route path="checkout" element={<AddressInfoPage />} />
           <Route path="booking-success" element={<BookingSuccessPage />} />
-          <Route path="orders" element={<MyOrdersPage />} />
-          <Route path="pickup-checklist" element={<PickupChecklistPage />} />
-          <Route path="payment" element={<PaymentPage />} />
+          {/* <Route path="orders" element={<MyOrdersPage />} /> */}
+          {/* <Route path="pickup-checklist" element={<PickupChecklistPage />} /> */}
+          {/* <Route path="payment" element={<PaymentPage />} /> */}
           <Route path="repair/mobile" element={<MobileRepairPage />} />
 
           <Route path="services" element={<ServicesPage />} />

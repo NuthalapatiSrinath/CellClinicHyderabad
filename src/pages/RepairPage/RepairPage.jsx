@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; // Added useState
+import React, { useEffect, useState } from "react";
 import { useParams, Link, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { brandsData } from "../../data/brands";
@@ -38,20 +38,34 @@ const RepairPage = () => {
   const key = brandName ? brandName.toLowerCase() : "apple";
   const data = brandsData[key] || brandsData["apple"];
 
-  // --- State for Search ---
+  // --- Search State ---
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    setSearchQuery(""); // Reset search when brand changes
-  }, [brandName]);
-
-  // --- Filter Logic ---
+  // --- Filter Models Logic ---
   const filteredModels = data.models
     ? data.models.filter((model) =>
         model.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setSearchQuery(""); // Reset search when brand changes
+
+    // --- Console Logs for Debugging ---
+    console.log("RepairPage Loaded");
+    console.log("Brand Name from URL:", brandName);
+    console.log("Data Key used:", key);
+    console.log("Loaded Data:", data);
+    console.log("Available Models:", data.models);
+    console.log("Available Services:", data.services);
+  }, [brandName, key, data]);
+
+  // Log filtered models whenever search query changes
+  useEffect(() => {
+    console.log("Search Query:", searchQuery);
+    console.log("Filtered Models:", filteredModels);
+  }, [searchQuery, filteredModels]);
 
   return (
     <div className={styles.pageWrapper}>
@@ -88,6 +102,7 @@ const RepairPage = () => {
                   to={`/repair/model/${encodeURIComponent(model.name)}`}
                   className={styles.modelLink}
                   style={{ textDecoration: "none" }}
+                  onClick={() => console.log("Clicked Model:", model.name)} // Log click
                 >
                   <motion.div
                     className={styles.modelCard}

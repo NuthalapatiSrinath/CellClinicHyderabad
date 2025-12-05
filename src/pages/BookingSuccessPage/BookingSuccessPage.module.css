@@ -44,7 +44,11 @@
   font-size: 15px;
   color: var(--Text_Secondary);
   margin-bottom: 30px;
-  line-height: 1.5;
+  line-height: 1.6;
+}
+
+.subText strong {
+  color: var(--Primary_Color);
 }
 
 .orderDetails {
@@ -53,6 +57,7 @@
   border-radius: 10px;
   margin-bottom: 30px;
   text-align: left;
+  border: 1px solid var(--Border_Color);
 }
 
 .row {
@@ -72,7 +77,7 @@
   gap: 15px;
 }
 
-.trackBtn {
+.homeBtn {
   background-color: var(--Primary_Color);
   color: white;
   padding: 14px;
@@ -85,20 +90,24 @@
   gap: 8px;
   transition: background 0.2s;
 }
-.trackBtn:hover {
+.homeBtn:hover {
   background-color: var(--Primary_Hover);
 }
 
-.homeBtn {
-  color: var(--Text_Secondary);
+.callBtn {
+  background-color: transparent;
+  color: var(--Text_Primary);
+  padding: 14px;
+  border-radius: 8px;
   text-decoration: none;
-  font-size: 14px;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  border: 1px solid var(--Border_Color);
+  transition: background 0.2s;
 }
-.homeBtn:hover {
-  color: var(--Primary_Color);
+.callBtn:hover {
+  background-color: var(--Background_Alt);
 }

@@ -7,6 +7,7 @@ import MainModal from "../MainModal/MainModal";
 // Import your new modal
 import LoginModal from "../LoginModal/LoginModal";
 import FindModelModal from "../FindModelModal/FindModelModal";
+import BookingModal from "../BookingModal/BookingModal";
 
 function RenderModal() {
   const activeModal = useSelector((state) => state.modal.type);
@@ -15,6 +16,7 @@ function RenderModal() {
   const allModals = {
     login: <LoginModal />,
     findModel: <FindModelModal />,
+    booking: <BookingModal />,
   };
 
   return (
