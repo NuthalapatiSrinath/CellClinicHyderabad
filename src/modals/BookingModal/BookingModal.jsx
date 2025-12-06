@@ -9,9 +9,11 @@ import { inquiryService } from "../../services/inquiryService";
 const BookingModal = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { data } = useSelector((state) => state.modal);
 
-  const [formData, setFormData] = useState({ name: "", mobile: "" });
+  // 1. Access the correct state key: modalData
+  const { modalData } = useSelector((state) => state.modal);
+
+  const [formData, setFormData] = useState({ name: "", mobileNumber: "" });
   const [status, setStatus] = useState("idle");
 
   const formatPrice = (price) =>
@@ -21,28 +23,45 @@ const BookingModal = () => {
       maximumFractionDigits: 0,
     }).format(price);
 
+  // UPDATED: Handle Change with Number Validation
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Logic: If input is mobileNumber, restrict to digits only
+    if (name === "mobileNumber") {
+      // Replace any non-digit character with empty string
+      const numericValue = value.replace(/\D/g, "");
+      setFormData({ ...formData, [name]: numericValue });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // UPDATED: Validation Check before submission
+    if (formData.mobileNumber.length !== 10) {
+      alert("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
     setStatus("loading");
 
-    // --- STRICT PAYLOAD CONSTRUCTION ---
+    // 2. Construct the Payload using modalData
     const payload = {
       name: formData.name,
-      mobileNumber: formData.mobile,
-      deviceModel: data?.deviceModel || "Unknown Device",
+      mobileNumber: formData.mobileNumber,
+      deviceModel: modalData?.deviceModel || "Unknown Device",
 
-      // MAPPING: Frontend 'title' -> Backend 'name'
+      // IMPORTANT: Map 'title' from frontend to 'name' for backend
       selectedServices:
-        data?.selectedServices?.map((s) => ({
-          name: s.title,
+        modalData?.selectedServices?.map((s) => ({
+          name: s.title, // Backend key is 'name'
           price: s.price,
         })) || [],
 
-      totalEstimatedPrice: data?.total || 0,
+      totalEstimatedPrice: modalData?.total || 0,
     };
 
     console.log(
@@ -105,20 +124,26 @@ const BookingModal = () => {
           <div className={styles.summaryCard}>
             <div className={styles.deviceRow}>
               <Smartphone size={20} className={styles.iconBlue} />
-              <span className={styles.deviceName}>{data?.deviceModel}</span>
+              <span className={styles.deviceName}>
+                {modalData?.deviceModel || "Device"}
+              </span>
             </div>
 
             <div className={styles.divider}></div>
 
             <ul className={styles.serviceList}>
-              {data?.selectedServices?.map((s, idx) => (
-                <li key={idx}>
-                  <span>{s.title}</span>
-                  <span className={styles.servicePrice}>
-                    {formatPrice(s.price)}
-                  </span>
-                </li>
-              ))}
+              {modalData?.selectedServices?.length > 0 ? (
+                modalData.selectedServices.map((s, idx) => (
+                  <li key={idx}>
+                    <span>{s.title}</span>
+                    <span className={styles.servicePrice}>
+                      {formatPrice(s.price)}
+                    </span>
+                  </li>
+                ))
+              ) : (
+                <li>No services selected</li>
+              )}
             </ul>
 
             <div className={styles.divider}></div>
@@ -126,7 +151,7 @@ const BookingModal = () => {
             <div className={styles.totalRow}>
               <span>Total Estimate</span>
               <span className={styles.totalPrice}>
-                {formatPrice(data?.total || 0)}
+                {formatPrice(modalData?.total || 0)}
               </span>
             </div>
           </div>
@@ -148,10 +173,10 @@ const BookingModal = () => {
               <label>Mobile Number</label>
               <input
                 type="tel"
-                name="mobile"
+                name="mobileNumber" // Updated to match backend key
                 placeholder="9876543210"
                 maxLength="10"
-                value={formData.mobile}
+                value={formData.mobileNumber}
                 onChange={handleChange}
                 required
               />

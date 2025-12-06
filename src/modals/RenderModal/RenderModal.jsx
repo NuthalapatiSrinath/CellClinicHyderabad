@@ -1,43 +1,56 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { closeModal } from "../../redux/slices/modalSlice"; // specific path to your slice
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "./RenderModal.module.css";
 import MainModal from "../MainModal/MainModal";
 
-// Import your new modal
+// Import your Modal Components
 import LoginModal from "../LoginModal/LoginModal";
 import FindModelModal from "../FindModelModal/FindModelModal";
 import BookingModal from "../BookingModal/BookingModal";
 
-function RenderModal() {
-  const activeModal = useSelector((state) => state.modal.type);
+const RenderModal = () => {
+  const dispatch = useDispatch();
 
-  // Register the modal here
-  const allModals = {
-    login: <LoginModal />,
-    findModel: <FindModelModal />,
-    booking: <BookingModal />,
+  // 1. Get both the 'type' (which modal to show) and the 'data' (payload)
+  const { type, data } = useSelector((state) => state.modal);
+
+  // 2. Map keys to Component References (not JSX elements)
+  // Ensure these keys match what you dispatch (e.g., "BOOKING")
+  const MODAL_COMPONENTS = {
+    LOGIN: LoginModal,
+    FIND_MODEL: FindModelModal,
+    BOOKING: BookingModal,
   };
+
+  // 3. Select the active component based on the type
+  // We use UPPERCASE keys to be safe, assuming your dispatch sends "BOOKING"
+  const ActiveComponent = type
+    ? MODAL_COMPONENTS[type] || MODAL_COMPONENTS[type.toUpperCase()]
+    : null;
 
   return (
     <MainModal>
       <AnimatePresence mode="wait">
-        {activeModal && (
+        {ActiveComponent && (
           <motion.div
-            key={activeModal}
+            key={type}
             className={styles.RenderModal}
-            // Adjusted animation for a centered pop-up feel
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
+            // Centered pop-up animation
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
           >
-            {allModals[activeModal]}
+            {/* 4. Render the component and spread the data as props */}
+            {/* This passes deviceModel, selectedServices, etc. directly to BookingModal */}
+            <ActiveComponent {...data} close={() => dispatch(closeModal())} />
           </motion.div>
         )}
       </AnimatePresence>
     </MainModal>
   );
-}
+};
 
 export default RenderModal;

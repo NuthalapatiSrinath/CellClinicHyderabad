@@ -6,13 +6,13 @@ import { getImageUrl } from "../../utils/imageHelper"; // Import Helper
 import styles from "./RepairPage.module.css";
 import {
   Search,
-  Smartphone,
-  Battery,
-  Zap,
-  Camera,
-  Disc,
-  Headphones,
-  Settings,
+  // Smartphone,
+  // Battery,
+  // Zap,
+  // Camera,
+  // Disc,
+  // Headphones,
+  // Settings,
 } from "lucide-react";
 
 const RepairPage = () => {

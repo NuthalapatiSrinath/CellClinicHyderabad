@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // 1. Import useNavigate
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Instagram, MessageCircle } from "lucide-react";
 import styles from "./HeroSection.module.css";
@@ -8,11 +9,10 @@ const slides = [
   {
     id: 1,
     tagline: "AT YOUR DOORSTEP",
-    // Using HTML break for specific styling
     title: "MacBook Home <br /> Solutions",
     description:
       "We are capable of doing all solution of your MacBook i.e screen replacement, battery replacement, hardware issues, other issues, etc...",
-    image: "/images/watch.webp", // As requested
+    image: "/images/watch.webp",
     imgAlt: "Smart Watch Repair",
   },
   {
@@ -21,7 +21,7 @@ const slides = [
     title: "Expert iPhone <br /> Repairs",
     description:
       "From cracked screens to battery replacements, our certified technicians bring your iPhone back to life in no time at your doorstep.",
-    image: "/images/watch.webp", // Placeholder path for next slide
+    image: "/images/watch.webp",
     imgAlt: "iPhone Repair",
   },
   {
@@ -30,7 +30,7 @@ const slides = [
     title: "iPad & Tablet <br /> Services",
     description:
       "Comprehensive diagnostics and repair services for all iPad models and leading Android tablets with genuine parts warranty.",
-    image: "/images/watch.webp", // Placeholder path for next slide
+    image: "/images/watch.webp",
     imgAlt: "iPad Repair",
   },
 ];
@@ -47,12 +47,20 @@ const containerVariants = {
 
 const itemVariants = {
   hidden: { x: -30, opacity: 0 },
-  visible: { x: 0, opacity: 1, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
 };
 
 const imageVariants = {
   hidden: { x: 50, opacity: 0 },
-  visible: { x: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
+  visible: {
+    x: 0,
+    opacity: 1,
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
   exit: { x: 50, opacity: 0, transition: { duration: 0.3 } },
 };
 
@@ -66,6 +74,7 @@ const floatingAnimation = {
 };
 
 const HeroSection = () => {
+  const navigate = useNavigate(); // 2. Initialize the hook
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {
@@ -107,7 +116,13 @@ const HeroSection = () => {
               </motion.p>
 
               <motion.div className={styles.actionRow} variants={itemVariants}>
-                <button className={styles.bookBtn}>BOOK NOW</button>
+                {/* 3. Add onClick handler to navigate */}
+                <button
+                  className={styles.bookBtn}
+                  onClick={() => navigate("/services")}
+                >
+                  BOOK NOW
+                </button>
 
                 <div className={styles.socialIcons}>
                   <a

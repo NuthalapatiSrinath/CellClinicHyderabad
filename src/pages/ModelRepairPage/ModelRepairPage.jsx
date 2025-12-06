@@ -23,18 +23,18 @@ import styles from "./ModelRepairPage.module.css";
 const getServiceMetadata = (title) => {
   const t = title?.toLowerCase() || "";
   if (t.includes("display") || t.includes("screen"))
-    return { icon: <Smartphone size={32} /> };
-  if (t.includes("glass")) return { icon: <Monitor size={32} /> };
-  if (t.includes("battery")) return { icon: <Battery size={32} /> };
+    return { icon: <Smartphone size={28} /> };
+  if (t.includes("glass")) return { icon: <Monitor size={28} /> };
+  if (t.includes("battery")) return { icon: <Battery size={28} /> };
   if (t.includes("charging") || t.includes("port"))
-    return { icon: <Zap size={32} /> };
+    return { icon: <Zap size={28} /> };
   if (t.includes("back") || t.includes("panel"))
-    return { icon: <Disc size={32} /> };
+    return { icon: <Disc size={28} /> };
   if (t.includes("face") || t.includes("sensor"))
-    return { icon: <ScanFace size={32} /> };
+    return { icon: <ScanFace size={28} /> };
   if (t.includes("speaker") || t.includes("mic"))
-    return { icon: <PhoneCall size={32} /> };
-  return { icon: <Search size={32} /> };
+    return { icon: <PhoneCall size={28} /> };
+  return { icon: <Search size={28} /> };
 };
 
 const ModelRepairPage = () => {
@@ -63,13 +63,14 @@ const ModelRepairPage = () => {
           // --- Map API Data to UI format ---
           const mappedData = response.data.map((s) => ({
             id: s._id,
-            title: s.title, // This becomes 'name' in the backend payload later
-            price: s.price,
-            originalPrice: s.originalPrice,
-            discount: s.discount === "0%" ? null : s.discount,
+            title: s.title,
             description: s.description,
-            icon: getServiceMetadata(s.title).icon,
+            price: s.price || 0,
+            originalPrice: s.originalPrice || 0,
+            discount: s.discount === "0%" ? null : s.discount,
             isActive: s.isActive ?? true,
+            // Add icon for UI display only
+            icon: getServiceMetadata(s.title).icon,
           }));
           setServices(mappedData);
         }
@@ -86,10 +87,10 @@ const ModelRepairPage = () => {
     const exists = cart.find((item) => item.id === service.id);
     if (exists) {
       setCart(cart.filter((item) => item.id !== service.id));
-      setTotal(total - service.price);
+      setTotal((prev) => prev - service.price);
     } else {
       setCart([...cart, service]);
-      setTotal(total + service.price);
+      setTotal((prev) => prev + service.price);
     }
   };
 
@@ -102,14 +103,21 @@ const ModelRepairPage = () => {
         }).format(price)
       : "Contact for Price";
 
-  // --- DISPATCH TO MODAL ---
+  // --- DISPATCH TO MODAL (FIXED) ---
   const handleGetQuote = () => {
+    // 1. SANITIZE: Remove 'icon' (React Element) from data before sending to Redux
+    const sanitizedServices = cart.map((item) => {
+      const { icon, ...rest } = item; // Destructure to exclude icon
+      return rest;
+    });
+
     dispatch(
       openModal({
-        type: "booking",
-        data: {
+        type: "booking", // Matches 'activeModal' in RenderModal
+        // IMPORTANT: Use 'modalData' because that is what modalSlice expects
+        modalData: {
           deviceModel: deviceName,
-          selectedServices: cart, // Array of services with { title, price }
+          selectedServices: sanitizedServices,
           total: total,
         },
       })
@@ -119,7 +127,7 @@ const ModelRepairPage = () => {
   if (loading)
     return (
       <div className={styles.loadingContainer}>
-        <Loader2 className={styles.spinner} />
+        <Loader2 className={styles.spinner} size={48} />
       </div>
     );
 
@@ -157,55 +165,87 @@ const ModelRepairPage = () => {
                     whileHover={{ y: -3 }}
                     onClick={() => toggleService(service)}
                   >
+                    {/* Discount Badge */}
                     {service.discount && (
                       <span className={styles.discountBadge}>
                         {service.discount} OFF
                       </span>
                     )}
-                    <div className={styles.cardContent}>
+
+                    <div className={styles.cardBody}>
+                      {/* Icon */}
                       <div className={styles.iconBox}>{service.icon}</div>
+
+                      {/* Text Content */}
                       <div className={styles.details}>
                         <h4 className={styles.serviceTitle}>{service.title}</h4>
+
+                        {/* Description added here */}
+                        {service.description && (
+                          <p className={styles.serviceDesc}>
+                            {service.description}
+                          </p>
+                        )}
+
+                        {/* Price Section */}
                         <div className={styles.priceRow}>
                           <span className={styles.price}>
                             {formatPrice(service.price)}
                           </span>
+                          {service.originalPrice > service.price && (
+                            <span className={styles.originalPrice}>
+                              {formatPrice(service.originalPrice)}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
-                    <button
-                      className={`${styles.addBtn} ${
-                        isSelected ? styles.addedBtn : ""
-                      }`}
-                    >
-                      {isSelected ? (
-                        <>
-                          <Check size={16} /> Selected
-                        </>
-                      ) : (
-                        "Select"
-                      )}
-                    </button>
+
+                    {/* Selection Indicator */}
+                    <div className={styles.cardFooter}>
+                      <button
+                        className={`${styles.addBtn} ${
+                          isSelected ? styles.addedBtn : ""
+                        }`}
+                      >
+                        {isSelected ? (
+                          <>
+                            <Check size={16} /> Selected
+                          </>
+                        ) : (
+                          "Add"
+                        )}
+                      </button>
+                    </div>
                   </motion.div>
                 );
               })}
             </div>
           </div>
 
-          {/* Quote Section */}
+          {/* Quote Section (Sticky) */}
           <div className={styles.rightColumn}>
             <div className={styles.priceCard}>
               <h3 className={styles.priceTitle}>Estimated Quote</h3>
-              {cart.map((item) => (
-                <div key={item.id} className={styles.cartRow}>
-                  <span>{item.title}</span>
-                  <span>{formatPrice(item.price)}</span>
+
+              {cart.length === 0 ? (
+                <p className={styles.emptyCartMsg}>No services selected.</p>
+              ) : (
+                <div className={styles.cartItems}>
+                  {cart.map((item) => (
+                    <div key={item.id} className={styles.cartRow}>
+                      <span>{item.title}</span>
+                      <span>{formatPrice(item.price)}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
+
               <div className={styles.billRow}>
                 <span>Total</span>
                 <span>{formatPrice(total)}</span>
               </div>
+
               <button
                 className={styles.bookRepairBtn}
                 onClick={handleGetQuote}
@@ -213,6 +253,9 @@ const ModelRepairPage = () => {
               >
                 Get Quote
               </button>
+              <p className={styles.quoteNote}>
+                *Final price may vary after physical diagnosis.
+              </p>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Truck, Package, MapPin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import styles from "./HowItWorksSection.module.css";
 
 // Updated Data with specific 'colorTheme' for each tab
@@ -91,6 +92,12 @@ const tabContent = {
 const HowItWorksSection = () => {
   const [activeTab, setActiveTab] = useState("doorstep");
   const activeContent = tabContent[activeTab];
+  const navigate = useNavigate();
+
+  const handleBookNow = () => {
+    // navigate to services page
+    navigate("/services");
+  };
 
   return (
     <section className={styles.section}>
@@ -175,7 +182,9 @@ const HowItWorksSection = () => {
                   >
                     {/* Button text color set to specific dark color in CSS to ensure visibility */}
                     <button
+                      type="button"
                       className={styles.bookBtn}
+                      onClick={handleBookNow}
                       style={{ color: activeContent.colorTheme }}
                     >
                       Book Now

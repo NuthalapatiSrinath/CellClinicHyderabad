@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import styles from "./BrandsSection.module.css";
-import { catalogService } from "../../services/catalogService"; // Import API Service
+import { catalogService } from "../../services/catalogService";
 
 // --- UI Config (Maps DB names to your specific colors/styles) ---
 const BRAND_STYLES = {
@@ -21,7 +21,29 @@ const BRAND_STYLES = {
   honor: { color: "#00E0FF", style: "gradient" },
 };
 
-// --- Fallback Data ---
+// --- SAFE PALETTE for New/Unknown Brands ---
+const SAFE_COLORS = [
+  "#2563EB",
+  "#DC2626",
+  "#16A34A",
+  "#9333EA",
+  "#EA580C",
+  "#0891B2",
+  "#DB2777",
+  "#4F46E5",
+  "#059669",
+  "#7C3AED",
+];
+
+const getConsistentColor = (str) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash % SAFE_COLORS.length);
+  return SAFE_COLORS[index];
+};
+
 const fallbackBrands = [
   { id: 1, name: "Apple", color: "#000000", style: "apple" },
   { id: 2, name: "xiaomi", label: "mi", color: "#FF6900", style: "xiaomi" },
@@ -39,69 +61,86 @@ const fallbackBrands = [
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
 };
 
 const cardVariants = {
-  hidden: { opacity: 0, scale: 0.8, y: 30 },
+  hidden: { opacity: 0, scale: 0.9, y: 18 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: { type: "spring", stiffness: 120, damping: 14 },
+    transition: { type: "spring", stiffness: 120, damping: 16 },
   },
 };
 
 const BrandsSection = () => {
   const [brandsList, setBrandsList] = useState(fallbackBrands);
+  const location = useLocation();
+
+  const fetchBrands = useCallback(async () => {
+    try {
+      const response = await catalogService.getBrands();
+
+      if (response && response.data && response.data.length > 0) {
+        const mobileBrands = response.data.filter(
+          (b) =>
+            !["ipad", "macbook", "smartwatch"].includes(
+              (b.name || "").toLowerCase()
+            )
+        );
+
+        if (mobileBrands.length > 0) {
+          const integratedBrands = mobileBrands.map((b) => {
+            const brandKey = (b.name || "").toLowerCase();
+            const predefinedConfig = BRAND_STYLES[brandKey];
+
+            const finalConfig = predefinedConfig || {
+              color: getConsistentColor(brandKey),
+              style: "sans",
+              nameDisplay: b.name
+                ? b.name.toUpperCase()
+                : brandKey.toUpperCase(),
+            };
+
+            return {
+              id: b._id,
+              name: finalConfig.nameDisplay || b.name,
+              label: finalConfig.label,
+              color: finalConfig.color,
+              style: finalConfig.style,
+              dbName: b.name,
+            };
+          });
+
+          setBrandsList(integratedBrands);
+          return;
+        }
+      }
+
+      // fallback if nothing useful
+      setBrandsList(fallbackBrands);
+    } catch (error) {
+      console.error("Error fetching brands:", error);
+      setBrandsList(fallbackBrands);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        console.log("🔵 Fetching Brands from API..."); // LOG 1: Start
-        const response = await catalogService.getBrands();
-        console.log("🟢 API Response:", response); // LOG 2: Raw Response
+    let mounted = true;
+    if (mounted) fetchBrands();
 
-        if (response && response.data && response.data.length > 0) {
-          // Filter only mobile brands
-          const mobileBrands = response.data.filter(
-            (b) =>
-              !["ipad", "macbook", "smartwatch"].includes(b.name.toLowerCase())
-          );
-
-          if (mobileBrands.length > 0) {
-            const integratedBrands = mobileBrands.map((b) => {
-              const config = BRAND_STYLES[b.name.toLowerCase()] || {
-                color: "#333",
-                style: "sans",
-              };
-              return {
-                id: b._id,
-                name: config.nameDisplay || b.name,
-                label: config.label,
-                color: config.color,
-                style: config.style,
-                dbName: b.name,
-              };
-            });
-
-            console.log("✅ Brands Mapped & Ready:", integratedBrands); // LOG 3: Final Data
-            setBrandsList(integratedBrands);
-          } else {
-            console.log("⚠️ API returned data, but no mobile brands found.");
-          }
-        } else {
-          console.log("⚠️ API Response empty or invalid structure.");
-        }
-      } catch (error) {
-        console.error("🔴 Error fetching brands:", error); // LOG 4: Error
-      }
+    // ensure back/forward navigation triggers a re-fetch
+    const onPop = () => {
+      fetchBrands();
     };
-    fetchBrands();
-  }, []);
+    window.addEventListener("popstate", onPop);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("popstate", onPop);
+    };
+  }, [fetchBrands, location.key]);
 
   return (
     <section className={styles.section}>
@@ -111,17 +150,17 @@ const BrandsSection = () => {
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
         >
           Choose Your Brands
         </motion.h2>
 
+        {/* always show items when mounted (no whileInView) */}
         <motion.div
           className={styles.grid}
           variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.2 }}
+          initial="visible"
+          animate="visible"
         >
           {brandsList.map((brand) => (
             <NavLink
@@ -133,9 +172,9 @@ const BrandsSection = () => {
                 className={styles.card}
                 variants={cardVariants}
                 whileHover={{
-                  y: -5,
+                  y: -6,
                   boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
-                  transition: { duration: 0.2 },
+                  transition: { duration: 0.18 },
                 }}
               >
                 <div
@@ -148,7 +187,6 @@ const BrandsSection = () => {
                   {brand.style === "oneplus" && (
                     <span className={styles.onePlusBox}>1+</span>
                   )}
-
                   {brand.label ? brand.label : brand.name}
                 </div>
               </motion.div>

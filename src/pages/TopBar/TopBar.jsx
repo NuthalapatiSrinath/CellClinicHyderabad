@@ -86,7 +86,12 @@ const TopBar = () => {
                   <span>info@cellclinichyd.com</span>
                 </a>
               </div>
-              <button className={styles.bookNowBtnSmall}>
+
+              {/* Added onClick to navigate to Services */}
+              <button
+                className={styles.bookNowBtnSmall}
+                onClick={() => navigate("/services")}
+              >
                 <CalendarDays size={14} />
                 <span>Book Now</span>
               </button>

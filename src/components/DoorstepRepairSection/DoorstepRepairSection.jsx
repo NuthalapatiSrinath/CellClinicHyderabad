@@ -107,7 +107,7 @@ const DoorstepRepairSection = () => {
         <div className={styles.bottomText}>
           <button
             className={styles.helpLink}
-            onClick={() => dispatch(openModal({ type: "findModel" }))}
+            onClick={() => dispatch(openModal({ type: "FIND_MODEL" }))}
           >
             How to find my model number
           </button>
