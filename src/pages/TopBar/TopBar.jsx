@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { toggleTheme } from "../../redux/slices/themeSlice";
-import { MapPin, Mail, CalendarDays, Sun, Moon, Menu, X } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+// Removed toggleTheme import
+import { openModal } from "../../redux/slices/modalSlice";
+import { MapPin, Mail, CalendarDays, Menu, X } from "lucide-react"; // Removed Sun, Moon
 import styles from "./TopBar.module.css";
 
 const TopBar = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
-  const theme = useSelector((state) => state.theme.mode);
+  // Removed theme selector
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,6 +27,11 @@ const TopBar = () => {
 
   // Helper to check active state
   const isActive = (path) => location.pathname === path;
+
+  // --- NEW HANDLER FOR QUICK BOOKING ---
+  const handleQuickBooking = () => {
+    dispatch(openModal({ type: "QUICK_BOOKING" }));
+  };
 
   return (
     <>
@@ -50,10 +55,10 @@ const TopBar = () => {
                 </a>
               </div>
 
-              {/* Added onClick to navigate to Services */}
+              {/* --- UPDATED BUTTON --- */}
               <button
                 className={styles.bookNowBtnSmall}
-                onClick={() => navigate("/services")}
+                onClick={handleQuickBooking}
               >
                 <CalendarDays size={14} />
                 <span>Book Now</span>
@@ -112,13 +117,7 @@ const TopBar = () => {
 
             {/* Actions */}
             <div className={styles.actions}>
-              <button
-                onClick={() => dispatch(toggleTheme())}
-                className={styles.themeToggle}
-                aria-label="Toggle Theme"
-              >
-                {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-              </button>
+              {/* REMOVED THEME TOGGLE BUTTON HERE */}
 
               {/* Mobile Toggle */}
               <button
@@ -131,7 +130,7 @@ const TopBar = () => {
           </div>
         </div>
 
-        {/* --- Mobile Menu (Moved inside mainNav relative container) --- */}
+        {/* --- Mobile Menu --- */}
         <div
           className={`${styles.mobileMenuContainer} ${
             isMenuOpen ? styles.menuOpen : ""
@@ -175,13 +174,15 @@ const TopBar = () => {
             </Link>
 
             <div className={styles.mobileBtnWrapper}>
-              <Link
-                to="/contact"
+              <button
                 className={styles.contactBtnMobile}
-                onClick={handleLinkClick}
+                onClick={() => {
+                  handleLinkClick();
+                  handleQuickBooking();
+                }}
               >
-                Contact Us
-              </Link>
+                Book a Repair
+              </button>
             </div>
           </div>
         </div>

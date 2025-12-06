@@ -7,7 +7,6 @@ import BestInClassSection from "../../components/BestInClassSection/BestInClassS
 import { catalogService } from "../../services/catalogService";
 
 // --- Configuration: Brand Styles & Colors ---
-// This ensures we use YOUR specific colors/styles, ignoring API images.
 const BRAND_STYLES = {
   apple: { color: "#000000", style: "apple" },
   xiaomi: { label: "mi", color: "#FF6900", style: "xiaomi" },
@@ -26,7 +25,7 @@ const BRAND_STYLES = {
   honor: { color: "#00E0FF", style: "gradient" },
 };
 
-// --- Special Cases: Keep Images for these ONLY ---
+// --- Special Cases: Keep Images for these ONLY (Logic kept, but these specific keys are excluded below) ---
 const SPECIAL_IMAGES = {
   ipad: { img: "/images/services/ipad.webp", style: "image" },
   iwatch: { img: "/images/services/smartwatch.webp", style: "image" },
@@ -51,32 +50,47 @@ const MobileRepairPage = () => {
       try {
         const response = await catalogService.getBrands();
         if (response && response.data) {
-          // Process API data to match your requested look
-          const processedBrands = response.data.map((apiBrand) => {
-            const key = apiBrand.name.toLowerCase().replace(/\s/g, "");
+          // --- FILTER: Exclude iPad, MacBook, Smartwatch ---
+          const EXCLUDED_KEYS = [
+            "ipad",
+            "iwatch",
+            "smartwatch",
+            "macbook",
+            "laptop",
+            "tablet",
+          ];
 
-            // 1. Check if it's a Special Image Item (iPad, MacBook, etc.)
-            if (SPECIAL_IMAGES[key]) {
+          // Process API data
+          const processedBrands = response.data
+            .filter((apiBrand) => {
+              const key = apiBrand.name.toLowerCase().replace(/\s/g, "");
+              // Only return brands that are NOT in the excluded list
+              return !EXCLUDED_KEYS.includes(key);
+            })
+            .map((apiBrand) => {
+              const key = apiBrand.name.toLowerCase().replace(/\s/g, "");
+
+              // 1. Check if it's a Special Image Item
+              if (SPECIAL_IMAGES[key]) {
+                return {
+                  id: apiBrand._id,
+                  name: apiBrand.name,
+                  ...SPECIAL_IMAGES[key],
+                };
+              }
+
+              // 2. Otherwise, find the matching Color/Style Config
+              const config =
+                BRAND_STYLES[key] || BRAND_STYLES[apiBrand.name.toLowerCase()];
+
               return {
                 id: apiBrand._id,
                 name: apiBrand.name,
-                ...SPECIAL_IMAGES[key], // Apply local image & style
+                color: config?.color || "#124191", // Default to Blue
+                style: config?.style || "sans",
+                label: config?.label || apiBrand.name,
               };
-            }
-
-            // 2. Otherwise, find the matching Color/Style Config
-            // (And explicitly IGNORE the apiBrand.image)
-            const config =
-              BRAND_STYLES[key] || BRAND_STYLES[apiBrand.name.toLowerCase()];
-
-            return {
-              id: apiBrand._id,
-              name: apiBrand.name,
-              color: config?.color || "#124191", // Default to Blue if unknown
-              style: config?.style || "sans", // Default style
-              label: config?.label || apiBrand.name,
-            };
-          });
+            });
 
           setBrands(processedBrands);
         }
