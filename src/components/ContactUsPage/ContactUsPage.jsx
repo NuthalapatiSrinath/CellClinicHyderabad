@@ -7,19 +7,29 @@ import {
   MessageCircle,
   CheckCircle,
   X,
+  Loader2,
 } from "lucide-react";
 import styles from "./ContactUsPage.module.css";
+import { contactService } from "../../services/contactService";
 
-// --- Toast Component (Internal) ---
-const Toast = ({ message, onClose }) => {
+// --- Toast Component ---
+const Toast = ({ message, type, onClose }) => {
+  const isError = type === "error";
   return (
     <motion.div
       className={styles.toast}
-      initial={{ opacity: 0, y: 50, x: "-50%" }}
+      style={{
+        backgroundColor: isError ? "#fee2e2" : "#dcfce7",
+        color: isError ? "#ef4444" : "#166534",
+        border: `1px solid ${isError ? "#fca5a5" : "#86efac"}`,
+      }}
+      // ANIMATION: Slide down from Top
+      initial={{ opacity: 0, y: -50, x: "-50%" }}
       animate={{ opacity: 1, y: 0, x: "-50%" }}
-      exit={{ opacity: 0, y: 20, x: "-50%" }}
+      exit={{ opacity: 0, y: -20, x: "-50%" }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
     >
-      <CheckCircle size={20} />
+      {isError ? <X size={20} /> : <CheckCircle size={20} />}
       <span>{message}</span>
       <button onClick={onClose} className={styles.toastClose}>
         <X size={16} />
@@ -28,7 +38,6 @@ const Toast = ({ message, onClose }) => {
   );
 };
 
-// --- Main Page Component ---
 const ContactUsPage = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -36,42 +45,65 @@ const ContactUsPage = () => {
     mobile: "",
     description: "",
   });
-  const [showToast, setShowToast] = useState(false);
+
+  const [status, setStatus] = useState({
+    loading: false,
+    showToast: false,
+    message: "",
+    type: "success",
+  });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate API call
-    console.log("Form Submitted", formData);
 
-    // Show Toast
-    setShowToast(true);
+    // Start Loading Animation
+    setStatus({ ...status, loading: true, showToast: false });
 
-    // Hide Toast after 3 seconds
+    try {
+      await contactService.submitContactForm(formData);
+
+      // Success State
+      setStatus({
+        loading: false,
+        showToast: true,
+        message: "Thanks for your valuable feedback!", // <-- UPDATED MESSAGE
+        type: "success",
+      });
+
+      setFormData({ name: "", email: "", mobile: "", description: "" });
+    } catch (error) {
+      console.error("Submission Failed:", error);
+      setStatus({
+        loading: false,
+        showToast: true,
+        message: "Something went wrong. Please try again.",
+        type: "error",
+      });
+    }
+
+    // Auto Hide Toast
     setTimeout(() => {
-      setShowToast(false);
-    }, 3000);
-
-    // Reset Form
-    setFormData({ name: "", email: "", mobile: "", description: "" });
+      setStatus((prev) => ({ ...prev, showToast: false }));
+    }, 4000);
   };
 
   return (
     <div className={styles.pageWrapper}>
       {/* Toast Notification */}
       <AnimatePresence>
-        {showToast && (
+        {status.showToast && (
           <Toast
-            message="Thank you! We will contact you shortly."
-            onClose={() => setShowToast(false)}
+            message={status.message}
+            type={status.type}
+            onClose={() => setStatus((prev) => ({ ...prev, showToast: false }))}
           />
         )}
       </AnimatePresence>
 
-      {/* Header Section */}
       <div className={styles.header}>
         <div className={styles.container}>
           <h1 className={styles.pageTitle}>Contact Us</h1>
@@ -81,7 +113,7 @@ const ContactUsPage = () => {
 
       <div className={styles.container}>
         <div className={styles.contentGrid}>
-          {/* --- Left Column: Form --- */}
+          {/* --- Form Section --- */}
           <motion.div
             className={styles.formSection}
             initial={{ opacity: 0, x: -30 }}
@@ -102,6 +134,7 @@ const ContactUsPage = () => {
                   value={formData.name}
                   onChange={handleChange}
                   className={styles.input}
+                  disabled={status.loading}
                 />
               </div>
 
@@ -114,6 +147,7 @@ const ContactUsPage = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className={styles.input}
+                  disabled={status.loading}
                 />
                 <input
                   type="tel"
@@ -123,6 +157,7 @@ const ContactUsPage = () => {
                   value={formData.mobile}
                   onChange={handleChange}
                   className={styles.input}
+                  disabled={status.loading}
                 />
               </div>
 
@@ -134,6 +169,7 @@ const ContactUsPage = () => {
                 value={formData.description}
                 onChange={handleChange}
                 className={styles.textarea}
+                disabled={status.loading}
               ></textarea>
 
               <motion.button
@@ -141,20 +177,35 @@ const ContactUsPage = () => {
                 className={styles.submitBtn}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.95 }}
+                disabled={status.loading}
+                // Smooth fade effect for loading state
+                animate={{ opacity: status.loading ? 0.7 : 1 }}
               >
-                SUBMIT
+                {status.loading ? (
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Loader2 className={styles.spin} size={20} /> Sending...
+                  </span>
+                ) : (
+                  "SUBMIT"
+                )}
               </motion.button>
             </form>
           </motion.div>
 
-          {/* --- Right Column: Info Cards --- */}
+          {/* --- Info Section --- */}
           <motion.div
             className={styles.infoSection}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {/* Card 1: Address */}
             <div className={styles.infoCard}>
               <div className={styles.iconBox}>
                 <MapPin size={24} color="white" />
@@ -162,13 +213,12 @@ const ContactUsPage = () => {
               <div className={styles.infoText}>
                 <h3>Head Office Address:</h3>
                 <p>
-                  Your Address, streetnumber, Plot 5 to 8, Sector 5,Main
-                  Address, Madhapur, Hyderabad, Telangana 408701
+                  Plot 5 to 8, Sector 5, Main Address, Madhapur, Hyderabad,
+                  Telangana 408701
                 </p>
               </div>
             </div>
 
-            {/* Card 2: Email */}
             <div className={styles.infoCard}>
               <div className={styles.iconBox}>
                 <Mail size={24} color="white" />
@@ -181,7 +231,6 @@ const ContactUsPage = () => {
               </div>
             </div>
 
-            {/* Card 3: Phone */}
             <div className={styles.infoCard}>
               <div className={styles.iconBox}>
                 <Phone size={24} color="white" />
@@ -192,7 +241,6 @@ const ContactUsPage = () => {
               </div>
             </div>
 
-            {/* Card 4: WhatsApp */}
             <div className={styles.infoCard}>
               <div className={styles.iconBox}>
                 <MessageCircle size={24} color="white" />

@@ -13,4 +13,7 @@ export const API_ROUTES = {
     CREATE: "/inquiry/create", // Public User Booking
     GET_ALL: "/inquiry/all", // Admin Dashboard
   },
+  CONTACT: {
+    SUBMIT: "/contact/submit",
+  },
 };

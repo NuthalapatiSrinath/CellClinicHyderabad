@@ -104,11 +104,16 @@
   align-self: flex-start;
   margin-top: 10px;
   box-shadow: var(--Shadow_Md);
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, opacity 0.2s; /* Added opacity transition */
 }
 
 .submitBtn:hover {
   background-color: var(--Primary_Hover);
+}
+
+.submitBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* --- Info Cards --- */
@@ -159,10 +164,10 @@
   text-decoration: underline;
 }
 
-/* --- Toast --- */
+/* --- Toast (UPDATED FOR TOP POSITION) --- */
 .toast {
   position: fixed;
-  bottom: 30px;
+  top: 120px; /* Moved to Top (Adjusted to not hide behind navbar if sticky) */
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--Success_Color);
@@ -173,14 +178,15 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  z-index: 2000;
+  z-index: 9999; /* High Z-Index to show on top of everything */
   font-weight: 600;
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .toastClose {
   background: transparent;
   border: none;
-  color: white;
+  color: inherit; /* Inherit color from parent for better contrast */
   cursor: pointer;
   padding: 4px;
   display: flex;
@@ -192,6 +198,19 @@
   opacity: 1;
 }
 
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
   .contentGrid {
@@ -201,5 +220,10 @@
   .row {
     flex-direction: column;
     gap: 20px;
+  }
+  .toast {
+    top: 90px; /* Slightly higher on mobile */
+    width: 90%;
+    justify-content: center;
   }
 }
