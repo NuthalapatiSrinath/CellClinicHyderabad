@@ -1,22 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from "../../redux/slices/themeSlice";
-import { openModal } from "../../redux/slices/modalSlice";
-import { logout } from "../../redux/slices/authSlice";
-import {
-  MapPin,
-  Mail,
-  CalendarDays,
-  Sun,
-  Moon,
-  Menu,
-  X,
-  User,
-  LogOut,
-  Package,
-  ChevronDown,
-} from "lucide-react";
+import { MapPin, Mail, CalendarDays, Sun, Moon, Menu, X } from "lucide-react";
 import styles from "./TopBar.module.css";
 
 const TopBar = () => {
@@ -25,14 +11,8 @@ const TopBar = () => {
   const location = useLocation();
   const theme = useSelector((state) => state.theme.mode);
 
-  // Get Auth State
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
-
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-
-  const profileRef = useRef(null);
 
   // Handle Scroll Effect
   useEffect(() => {
@@ -40,23 +20,6 @@ const TopBar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
-        setIsProfileOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleLogout = () => {
-    dispatch(logout());
-    setIsProfileOpen(false);
-    navigate("/");
-  };
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
@@ -156,49 +119,6 @@ const TopBar = () => {
               >
                 {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
               </button>
-
-              {/* --- AUTH BUTTON SECTION --- */}
-              {isAuthenticated ? (
-                <div className={styles.profileWrapper} ref={profileRef}>
-                  <button
-                    className={styles.profileBtn}
-                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  >
-                    <User size={20} />
-                    <span className={styles.profileName}>
-                      {user?.name || "My Account"}
-                    </span>
-                    <ChevronDown
-                      size={16}
-                      className={`${styles.chevron} ${
-                        isProfileOpen ? styles.rotate : ""
-                      }`}
-                    />
-                  </button>
-
-                  {isProfileOpen && (
-                    <div className={styles.dropdownMenu}>
-                      <Link to="/orders" className={styles.dropdownItem}>
-                        <Package size={18} /> My Orders
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className={styles.dropdownItem}
-                      >
-                        <LogOut size={18} /> Logout
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <button
-                  className={styles.signInBtn}
-                  onClick={() => dispatch(openModal({ type: "login" }))}
-                >
-                  <User size={20} />
-                  <span>Sign in / Register</span>
-                </button>
-              )}
 
               {/* Mobile Toggle */}
               <button
