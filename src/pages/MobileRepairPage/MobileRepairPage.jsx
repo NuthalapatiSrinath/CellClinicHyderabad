@@ -5,11 +5,12 @@ import { Search, Loader2 } from "lucide-react";
 import styles from "./MobileRepairPage.module.css";
 import BestInClassSection from "../../components/BestInClassSection/BestInClassSection";
 import { catalogService } from "../../services/catalogService";
+import { getImageUrl } from "../../utils/imageHelper";
 
-// --- Configuration: Brand Styles & Colors ---
+// --- Configuration: Brand Styles ---
 const BRAND_STYLES = {
   apple: { color: "#000000", style: "apple" },
-  xiaomi: { label: "mi", color: "#FF6900", style: "xiaomi" },
+  xiaomi: { label: "MI", color: "#FF6900", style: "xiaomi" }, // Fixed label to uppercase
   samsung: { color: "#1428A0", style: "sans" },
   vivo: { color: "#415FFF", style: "lowercase" },
   oneplus: { color: "#F00024", style: "oneplus" },
@@ -25,17 +26,33 @@ const BRAND_STYLES = {
   honor: { color: "#00E0FF", style: "gradient" },
 };
 
-// --- Special Cases: Keep Images for these ONLY (Logic kept, but these specific keys are excluded below) ---
-const SPECIAL_IMAGES = {
-  ipad: { img: "/images/services/ipad.webp", style: "image" },
-  iwatch: { img: "/images/services/smartwatch.webp", style: "image" },
-  macbook: { img: "/images/services/macbook.webp", style: "image" },
+const EXCLUDED_BRANDS = [
+  "ipad",
+  "iwatch",
+  "smartwatch",
+  "macbook",
+  "laptop",
+  "tablet",
+];
+
+// --- Animation Variants (Staggered Load) ---
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05, // Stagger effect for items
+    },
+  },
 };
 
-// --- Animation Variants ---
 const cardVariants = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.2 } },
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: "easeOut" },
+  },
 };
 
 const MobileRepairPage = () => {
@@ -48,47 +65,32 @@ const MobileRepairPage = () => {
 
     const fetchBrands = async () => {
       try {
+        // This is now CACHED in catalogService, so it returns instantly on 2nd load
         const response = await catalogService.getBrands();
-        if (response && response.data) {
-          // --- FILTER: Exclude iPad, MacBook, Smartwatch ---
-          const EXCLUDED_KEYS = [
-            "ipad",
-            "iwatch",
-            "smartwatch",
-            "macbook",
-            "laptop",
-            "tablet",
-          ];
 
-          // Process API data
+        if (response && response.data) {
           const processedBrands = response.data
             .filter((apiBrand) => {
               const key = apiBrand.name.toLowerCase().replace(/\s/g, "");
-              // Only return brands that are NOT in the excluded list
-              return !EXCLUDED_KEYS.includes(key);
+              return !EXCLUDED_BRANDS.includes(key);
             })
             .map((apiBrand) => {
               const key = apiBrand.name.toLowerCase().replace(/\s/g, "");
-
-              // 1. Check if it's a Special Image Item
-              if (SPECIAL_IMAGES[key]) {
-                return {
-                  id: apiBrand._id,
-                  name: apiBrand.name,
-                  ...SPECIAL_IMAGES[key],
-                };
-              }
-
-              // 2. Otherwise, find the matching Color/Style Config
               const config =
                 BRAND_STYLES[key] || BRAND_STYLES[apiBrand.name.toLowerCase()];
+              const validImage = getImageUrl(apiBrand.image);
+              const hasImage =
+                validImage && !validImage.includes("placeholder");
 
               return {
                 id: apiBrand._id,
-                name: apiBrand.name,
-                color: config?.color || "#124191", // Default to Blue
-                style: config?.style || "sans",
-                label: config?.label || apiBrand.name,
+                name: apiBrand.name.toUpperCase(), // Force Uppercase in Data
+                img: hasImage ? validImage : null,
+                style: hasImage ? "image" : config?.style || "sans",
+                color: config?.color || "#124191",
+                label: config?.label
+                  ? config.label.toUpperCase()
+                  : apiBrand.name.toUpperCase(),
               };
             });
 
@@ -104,7 +106,6 @@ const MobileRepairPage = () => {
     fetchBrands();
   }, []);
 
-  // Filter logic
   const filteredBrands = brands.filter((brand) =>
     brand.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -112,7 +113,6 @@ const MobileRepairPage = () => {
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.container}>
-        {/* --- Header --- */}
         <div className={styles.header}>
           <div>
             <h1 className={styles.pageTitle}>Repair Your Mobile Phone</h1>
@@ -132,17 +132,18 @@ const MobileRepairPage = () => {
 
         <h3 className={styles.sectionTitle}>Select Brand</h3>
 
-        {/* --- Brands Grid --- */}
         {loading ? (
-          <div style={{ textAlign: "center", padding: "40px", width: "100%" }}>
-            <Loader2
-              className={styles.spin}
-              size={32}
-              style={{ animation: "spin 1s linear infinite" }}
-            />
+          <div className={styles.loadingContainer}>
+            <Loader2 className={styles.spin} size={40} />
+            <p>Loading Brands...</p>
           </div>
         ) : (
-          <div className={styles.grid}>
+          <motion.div
+            className={styles.grid}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {filteredBrands.map((brand) => (
               <Link
                 to={`/repair-brand/${brand.name.toLowerCase()}`}
@@ -151,18 +152,20 @@ const MobileRepairPage = () => {
               >
                 <motion.div
                   className={styles.card}
-                  layout
-                  initial="hidden"
-                  animate="visible"
-                  variants={cardVariants}
+                  variants={cardVariants} // Item animation
                   whileHover={{ y: -5, borderColor: "var(--Primary_Color)" }}
                 >
                   <div className={styles.logoArea}>
-                    {brand.style === "image" ? (
+                    {brand.style === "image" && brand.img ? (
                       <img
                         src={brand.img}
                         alt={brand.name}
                         className={styles.brandImage}
+                        style={{
+                          maxWidth: "60px",
+                          maxHeight: "60px",
+                          objectFit: "contain",
+                        }}
                       />
                     ) : (
                       <div
@@ -178,12 +181,13 @@ const MobileRepairPage = () => {
                         {brand.style === "google" && (
                           <span className={styles.googleG}>G</span>
                         )}
-                        {/* Default Label */}
+
                         {!["moto", "oneplus", "google"].includes(brand.style) &&
-                          (brand.label ? brand.label : brand.name)}
+                          brand.label}
                       </div>
                     )}
                   </div>
+                  {/* CSS handles uppercase now, but data is also uppercase */}
                   <p className={styles.brandName}>{brand.name}</p>
                 </motion.div>
               </Link>
@@ -200,10 +204,9 @@ const MobileRepairPage = () => {
                 No brands found matching "{searchTerm}"
               </p>
             )}
-          </div>
+          </motion.div>
         )}
 
-        {/* --- Content Section 2 (Why Us) --- */}
         <div className={styles.whyUsWrapper}>
           <BestInClassSection />
         </div>

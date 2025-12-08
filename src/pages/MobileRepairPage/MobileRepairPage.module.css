@@ -301,3 +301,35 @@
     font-size: 20px;
   }
 }
+/* ... existing styles ... */
+
+.brandName {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--Text_Primary);
+  /* FIX: Force Uppercase via CSS */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Optional: Make the loading spinner centered and nicer */
+.loadingContainer {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  color: var(--Primary_Color);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

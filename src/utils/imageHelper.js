@@ -1,15 +1,17 @@
 // src/utils/imageHelper.js
 
-export const getImageUrl = (path) => {
-  if (!path) return "https://via.placeholder.com/150?text=No+Image";
+export const getImageUrl = (img) => {
+  if (!img) return null; // Return null so components know there is no image
 
-  // 1. If it's a full URL (like your Unsplash links), return it directly
-  if (path.startsWith("http") || path.startsWith("https")) {
-    return path;
-  }
+  // 1. Base64 (Manual Uploads from Admin Panel)
+  if (img.startsWith("data:")) return img;
 
-  // 2. If it's a relative path (from your uploads folder), prepend backend URL
-  // CHANGE THIS to your actual backend URL if you have local uploads
-  const API_BASE_URL = "http://localhost:4000";
-  return `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
+  // 2. External Links (Excel Uploads)
+  if (img.startsWith("http")) return img;
+
+  // 3. Local Uploads (Localhost / Public folder)
+  if (img.startsWith("/")) return img;
+
+  // 4. Relative paths without slash (Safety fix)
+  return `/${img}`;
 };

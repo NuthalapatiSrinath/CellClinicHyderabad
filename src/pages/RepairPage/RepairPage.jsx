@@ -4,16 +4,7 @@ import { motion } from "framer-motion";
 import { catalogService } from "../../services/catalogService";
 import { getImageUrl } from "../../utils/imageHelper"; // Import Helper
 import styles from "./RepairPage.module.css";
-import {
-  Search,
-  // Smartphone,
-  // Battery,
-  // Zap,
-  // Camera,
-  // Disc,
-  // Headphones,
-  // Settings,
-} from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 
 const RepairPage = () => {
   const { brandName } = useParams();
@@ -52,7 +43,6 @@ const RepairPage = () => {
       setLoading(true);
       try {
         const response = await catalogService.getDevices(brandId);
-        console.log("🟢 [RepairPage] Devices:", response.data);
         if (response && response.data) {
           setModels(response.data);
         }
@@ -95,13 +85,17 @@ const RepairPage = () => {
 
           <div className={styles.modelGrid}>
             {loading ? (
-              <p>Loading models...</p>
+              <div
+                style={{ width: "100%", textAlign: "center", padding: "40px" }}
+              >
+                <Loader2 className={styles.spin} size={32} />
+              </div>
             ) : filteredModels.length > 0 ? (
               filteredModels.map((model, idx) => (
                 <NavLink
                   key={model._id}
                   to={`/repair/model/${model._id}`}
-                  state={{ model: model }} // Pass full object including image
+                  state={{ model: model }} // Pass full object
                   className={styles.modelLink}
                 >
                   <motion.div
@@ -111,16 +105,19 @@ const RepairPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
                   >
-                    <img
-                      // FIX: Use imageHelper and check 'image' property
-                      src={getImageUrl(model.image)}
-                      alt={model.name}
-                      className={styles.modelImg}
-                      onError={(e) =>
-                        (e.target.src =
-                          "https://via.placeholder.com/150?text=No+Image")
-                      }
-                    />
+                    {/* WRAPPER DIV ADDED HERE */}
+                    <div className={styles.imageWrapper}>
+                      <img
+                        src={getImageUrl(model.image)}
+                        alt={model.name}
+                        className={styles.modelImg}
+                        loading="lazy"
+                        onError={(e) =>
+                          (e.target.src =
+                            "https://via.placeholder.com/150?text=No+Image")
+                        }
+                      />
+                    </div>
                     <p>{model.name}</p>
                   </motion.div>
                 </NavLink>
