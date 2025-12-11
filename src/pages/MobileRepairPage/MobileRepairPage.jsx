@@ -10,7 +10,7 @@ import { getImageUrl } from "../../utils/imageHelper";
 // --- Configuration: Brand Styles ---
 const BRAND_STYLES = {
   apple: { color: "#000000", style: "apple" },
-  xiaomi: { label: "MI", color: "#FF6900", style: "xiaomi" }, // Fixed label to uppercase
+  xiaomi: { label: "MI", color: "#FF6900", style: "xiaomi" },
   samsung: { color: "#1428A0", style: "sans" },
   vivo: { color: "#415FFF", style: "lowercase" },
   oneplus: { color: "#F00024", style: "oneplus" },
@@ -26,23 +26,24 @@ const BRAND_STYLES = {
   honor: { color: "#00E0FF", style: "gradient" },
 };
 
-const EXCLUDED_BRANDS = [
+// --- 1. UPDATED EXCLUSION LIST (Keywords to Block) ---
+// If a brand name contains ANY of these words, it will be hidden.
+const EXCLUDED_KEYWORDS = [
   "ipad",
-  "iwatch",
-  "smartwatch",
-  "macbook",
+  "watch", // Blocks "Smart Watch", "iWatch", "Apple Watch"
+  "mac", // Blocks "MacBook", "iMac", "Mac Mini"
   "laptop",
   "tablet",
+  "computer",
+  "pc",
 ];
 
-// --- Animation Variants (Staggered Load) ---
+// --- Animation Variants ---
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.05, // Stagger effect for items
-    },
+    transition: { staggerChildren: 0.05 },
   },
 };
 
@@ -65,15 +66,23 @@ const MobileRepairPage = () => {
 
     const fetchBrands = async () => {
       try {
-        // This is now CACHED in catalogService, so it returns instantly on 2nd load
         const response = await catalogService.getBrands();
 
         if (response && response.data) {
           const processedBrands = response.data
+            // --- 2. UPDATED FILTER LOGIC ---
             .filter((apiBrand) => {
-              const key = apiBrand.name.toLowerCase().replace(/\s/g, "");
-              return !EXCLUDED_BRANDS.includes(key);
+              // Normalize name: "Mac Book" -> "macbook"
+              const cleanName = apiBrand.name.toLowerCase().replace(/\s/g, "");
+
+              // Check if the name contains any blocked keyword
+              const isExcluded = EXCLUDED_KEYWORDS.some((keyword) =>
+                cleanName.includes(keyword)
+              );
+
+              return !isExcluded; // Keep only if NOT excluded
             })
+            // --- 3. MAPPING LOGIC (Unchanged) ---
             .map((apiBrand) => {
               const key = apiBrand.name.toLowerCase().replace(/\s/g, "");
               const config =
@@ -84,7 +93,7 @@ const MobileRepairPage = () => {
 
               return {
                 id: apiBrand._id,
-                name: apiBrand.name.toUpperCase(), // Force Uppercase in Data
+                name: apiBrand.name.toUpperCase(),
                 img: hasImage ? validImage : null,
                 style: hasImage ? "image" : config?.style || "sans",
                 color: config?.color || "#124191",
@@ -152,7 +161,7 @@ const MobileRepairPage = () => {
               >
                 <motion.div
                   className={styles.card}
-                  variants={cardVariants} // Item animation
+                  variants={cardVariants}
                   whileHover={{ y: -5, borderColor: "var(--Primary_Color)" }}
                 >
                   <div className={styles.logoArea}>
@@ -187,7 +196,6 @@ const MobileRepairPage = () => {
                       </div>
                     )}
                   </div>
-                  {/* CSS handles uppercase now, but data is also uppercase */}
                   <p className={styles.brandName}>{brand.name}</p>
                 </motion.div>
               </Link>
